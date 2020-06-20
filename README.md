@@ -14,7 +14,7 @@ This Project would use SQL and PYTHON (BeautifulSoup, requests)
 ## *THE SCRAPER*
   IT WORKS USING REQUESTS AND BEAUTIFUL SOUP
      Initially I made a list of links of which every link is parsed with **BeautifulSoups html.parser** after fetching the content 
-     with requests.get() method
+     with **requests.get()** method
        
   The name is got with soup.find(**html id**) similarly the price was fetched
        
