@@ -6,12 +6,19 @@ SET NAMES utf8 ;
 SET character_set_client = utf8 ;
 
 create table userDetails(
-`user_id` tinyint(4) NOT NULL AUTO_INCREMENT primary key,
+`user_id` tinyint(4) NOT NULL  primary key,
 `name` varchar(20) not null,
-`eMail` varchar(50) not null);
+`eMail` varchar(50) not null
+);
 
-create table products(
-`product_id` tinyint(4) NOT NULL AUTO_INCREMENT primary key,
-`productName` varchar(200) not null,
-`productLink` varchar(50),
-`price` int(5) not null);
+
+CREATE TABLE products (
+	user_id tinyint(4) not null,
+    product_id int NOT NULL,
+    productName VARCHAR(50) not null,
+    productLink VARCHAR(50) NOT NULL,
+    price INT(5) NOT NULL,
+    PRIMARY KEY (product_id),
+    FOREIGN KEY (user_id) REFERENCES userDetails(user_id)
+);
+

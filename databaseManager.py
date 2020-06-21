@@ -29,10 +29,28 @@ class Database():
 
 
     def insertProduct(self, data):
-        cmd = 'insert into products (product_id, productName, productLink, price) values (%s, %s, %s, %s)'
+        cmd = 'insert into products (user_id, product_id, productName, productLink, price) values (%s, %s, %s, %s, %s)'
         self.pointer.execute(cmd, data)
 
 
     def insertUser(self, data):
         cmd = 'INSERT INTO userdetails (user_id, name, eMail) values(%s, %s, %s)'
         self.pointer.execute(cmd, data)
+
+
+    def userPresent(self, name):
+        cmd = 'select user_id from userdetails where name = "'+name+'";'
+        self.pointer.execute(cmd)
+
+        try:
+            (ret,) = self.pointer
+            return ret[0]
+        except ValueError:
+            return False
+
+
+    def status(self):
+        cmd = "select productName, price from products where user_id = "+str(self.data['user_id'])+""
+        self.pointer.execute(cmd)
+        for returnVal in self.pointer:
+            print(returnVal[0], returnVal[1])

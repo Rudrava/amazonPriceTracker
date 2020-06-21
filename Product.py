@@ -29,8 +29,12 @@ class Product(metaData.Data):
         self.title = soup.find(id="productTitle").text.strip()[:20]
         self.price = self.toInt(soup.find(id="priceblock_ourprice").get_text())
         print(self.title, "\nCOSTS:- ",self.price)
-        self.insertProduct((self.productCount() + 1, self.title, link[0:20], self.price))
+        self.insertProduct((self.data['user_id'],self.productCount() + 1, self.title, link[0:20], self.price))
         self.updateProduct()
+
+
+    def addProduct(self):
+        pass
 
 
     def saveData(self):
