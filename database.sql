@@ -12,5 +12,6 @@ create table userDetails(
 
 create table products(
 `product_id` tinyint(4) NOT NULL AUTO_INCREMENT primary key,
-`productName` varchar(30) not null,
+`productName` varchar(200) not null,
+`productLink` varchar(50),
 `price` int(5) not null);
