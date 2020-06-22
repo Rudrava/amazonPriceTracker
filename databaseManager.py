@@ -1,16 +1,17 @@
 import mysql.connector
-
+import json
 
 class Database():
 
-    def inititalize(self):
-        self.DB, self.pointer = self.connect()
-
+    data = {}
 
     def connect(self):
         """
         This creates a connection to the DB hosted in localhost
         and returns the pointer to the connection class and the cursor method
+
+        This would be initialized from sign in method if user eexists
+
         """
         try:
             Db = mysql.connector.connect(user='root', password='Rudra1@sql',
@@ -24,21 +25,55 @@ class Database():
             else:
                 print(err)
 
-        print("COnnected")
-        return (Db, Db.cursor())
+        print("Connected")
+        self.DB, self.pointer = (Db, Db.cursor())
+
+
+    def localeDatainitiate(self):
+        '''
+        saves locale data to storage
+        TO BE INVOKED BY SIGN IN and login for fast
+        data access
+        '''
+        with open("metaData.json", "r") as file:
+            self.data = json.load(file)
+
 
 
     def insertProduct(self, data):
+        '''
+        inserts data into DB
+        '''
         cmd = 'insert into products (user_id, product_id, productName, productLink, price) values (%s, %s, %s, %s, %s)'
         self.pointer.execute(cmd, data)
+        self.updateProductCount()
 
 
-    def insertUser(self, data):
+    def updateProductCount(self):
+        '''
+        updates user product data from DB to locale data
+        '''
+        self.pointer.execute('select count(*) from products where user_id = '+str(self.data["user_id"])+';')
+        (ret,) = self.pointer
+        self.data['noProducts'] = ret[0]
+
+
+
+
+    def newUser(self, data):
+        '''
+        creates a new user into db
+        TO BE INVOLED BY LOGIN METHOD
+        '''
         cmd = 'INSERT INTO userdetails (user_id, name, eMail) values(%s, %s, %s)'
         self.pointer.execute(cmd, data)
 
 
-    def userPresent(self, name):
+    def oldUser(self, name):
+        '''
+        to check if user exists returns userID
+        to be invoked by signin method
+        '''
         cmd = 'select user_id from userdetails where name = "'+name+'";'
         self.pointer.execute(cmd)
 
@@ -49,8 +84,20 @@ class Database():
             return False
 
 
-    def status(self):
+    def updateUserCount(self):
+        self.pointer.execute('select count(*) from userdetails;')
+        (ret,) = self.pointer
+        self.data['noUsers'] = ret[0]
+
+
+    def productList(self):
+        '''
+        Prinits the productsName and Price'''
         cmd = "select productName, price from products where user_id = "+str(self.data['user_id'])+""
         self.pointer.execute(cmd)
         for returnVal in self.pointer:
             print(returnVal[0], returnVal[1])
+
+
+    def commitData(self):
+        self.DB.commit()
