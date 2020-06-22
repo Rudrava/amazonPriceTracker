@@ -25,7 +25,7 @@ class Database():
             else:
                 print(err)
 
-        print("Connected")
+        # print("Connected")
         self.DB, self.pointer = (Db, Db.cursor())
 
 
@@ -96,7 +96,7 @@ class Database():
         cmd = "select productName, price from products where user_id = "+str(self.data['user_id'])+""
         self.pointer.execute(cmd)
         for returnVal in self.pointer:
-            print(returnVal[0], returnVal[1])
+            print(returnVal[0], '\t\t\t\t\t\t',returnVal[1])
 
 
     def commitData(self):

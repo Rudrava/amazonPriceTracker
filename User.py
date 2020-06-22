@@ -1,5 +1,6 @@
 import re
 import requests
+import time
 from bs4 import BeautifulSoup
 from databaseManager import *
 # from product import Product
@@ -24,16 +25,29 @@ class User(Database):
 
     def fetchData(self, link):
         # global count
-        page = requests.get(link, headers = self.headers)
-
+        try:
+            page = requests.get(link, headers = self.headers)
+        except requests.exceptions.HTTPError:
+            print("invalid Link!!!")
+            time.sleep(1)
         soup = BeautifulSoup(page.content, "html.parser")
-
-        self.title = soup.find(id="productTitle").text.strip()[:20]
-        self.price = self.toInt(soup.find(id="priceblock_ourprice").get_text())
-        print(self.title, "\nCOSTS:- ",self.price)
+        try:
+            self.title = soup.find(id="productTitle").text.strip()[:20]
+        except:
+            print("Product not available !!!")
+            time.sleep(1)
+            return
+        try:
+            self.price = self.toInt(soup.find(id="priceblock_ourprice").get_text())
+        except:
+            print("may be out of stock")
+            self.price = 'N/A'
+            time.sleep(1)
+        print('Product Name:- ',self.title, "\nCOSTS:- ",self.price)
         self.updateProductCount()
         self.insertProduct((self.data['user_id'],self.data['noProducts'] + 1, self.title, link[0:20], self.price))
         self.commitData()
+        time.sleep(2)
 
 
     def inputEmail(self):
@@ -64,7 +78,7 @@ class User(Database):
         self.name = input("Enter your name : ")          #asks for name
         self.connect()
         uId = self.oldUser(self.name)
-        print(uId)
+        # print(uId)
         if uId:
             self.localeDatainitiate()
             self.data['user_id'], self.data['userName'] = uId, self.name
@@ -77,7 +91,7 @@ class User(Database):
 
 
 # user1 = User()        #creates user instance
-# # user1.login()     #to login
+# # # user1.login()     #to login
 # user1.signIn()     #to login
 # user1.fetchData("https://www.amazon.in/gp/product/B078BNQ318/ref=s9_acss_bw_cg_oneplus_2a1_w?pf_rd_m=A1K21FY43GMZF8&pf_rd_s=merchandised-search-3&pf_rd_r=JR4XRHAK8ZYR55591ENN&pf_rd_t=101&pf_rd_p=6ea832c7-9954-443c-b4cf-c62faba53ec6&pf_rd_i=21439725031")
 # user1.productList()

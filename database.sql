@@ -17,7 +17,7 @@ CREATE TABLE products (
     product_id int NOT NULL,
     productName VARCHAR(50) not null,
     productLink VARCHAR(50) NOT NULL,
-    price INT(5) NOT NULL,
+    price varchar(5) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES userDetails(user_id)
 );
 
